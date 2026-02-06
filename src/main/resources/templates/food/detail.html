@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <!-- Images -->
+        <div class="col-md-6 mb-4">
+            <img th:if="${foodItem.imageUrl}" 
+                 th:src="${foodItem.imageUrl}" 
+                 th:alt="${foodItem.name}"
+                 class="img-fluid rounded shadow">
+            <div th:unless="${foodItem.imageUrl}" 
+                 class="bg-light d-flex align-items-center justify-content-center rounded"
+                 style="height: 400px;">
+                <i class="bi bi-image text-muted" style="font-size: 6rem;"></i>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/catalog}">Catalog</a></li>
+                    <li class="breadcrumb-item active" th:text="${foodItem.name}">Item</li>
+                </ol>
+            </nav>
+
+            <h1 class="mb-3" th:text="${foodItem.name}">Food Item Name</h1>
+
+            <!-- Rating -->
+            <div class="mb-3" th:if="${foodItem.ratingCount > 0}">
+                <span class="text-warning">
+                    <i class="bi bi-star-fill"></i>
+                    <span th:text="${#numbers.formatDecimal(foodItem.avgRating, 1, 1)}">0.0</span>
+                </span>
+                <span class="text-muted">
+                    (<span th:text="${foodItem.ratingCount}">0</span> ratings)
+                </span>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-3">
+                <span class="h2 text-primary">
+                    $<span th:text="${#numbers.formatDecimal(foodItem.price, 1, 2)}">0.00</span>
+                </span>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+                <span class="badge bg-secondary">
+                    <i class="bi bi-tag"></i>
+                    <span th:text="${foodItem.category.name}">Category</span>
+                </span>
+            </div>
+
+            <!-- Availability -->
+            <div class="mb-3">
+                <span th:if="${foodItem.available}" class="badge bg-success">
+                    <i class="bi bi-check-circle"></i> Available
+                </span>
+                <span th:unless="${foodItem.available}" class="badge bg-danger">
+                    <i class="bi bi-x-circle"></i> Out of Stock
+                </span>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p th:text="${foodItem.description}">Food item description goes here...</p>
+            </div>
+
+            <!-- Add to Cart (Authenticated Users Only) -->
+            <div sec:authorize="isAuthenticated()">
+                <form th:if="${foodItem.available}" id="addToCartForm" class="mb-3">
+                    <input type="hidden" name="foodItemId" th:value="${foodItem.id}">
+                    <div class="row g-2">
+                        <div class="col-auto">
+                            <label for="quantity" class="col-form-label">Quantity:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" class="form-control" id="quantity" name="quantity" 
+                                   value="1" min="1" max="99" style="width: 80px;">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Login Prompt for Anonymous Users -->
+            <div sec:authorize="!isAuthenticated()">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Please <a th:href="@{/login}" class="alert-link">login</a> to add items to cart
+                </div>
+            </div>
+
+            <!-- Back to Catalog -->
+            <a th:href="@{/catalog}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Catalog
+            </a>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        document.getElementById('addToCartForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Adding...';
+            
+            try {
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update cart count in navbar
+                    const cartBadge = document.querySelector('.navbar .badge');
+                    if (cartBadge) {
+                        cartBadge.textContent = result.cartItemCount;
+                    }
+                    
+                    // Show success message
+                    alert('Item added to cart successfully!');
+                }
+            } catch (error) {
+                alert('Failed to add item to cart. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

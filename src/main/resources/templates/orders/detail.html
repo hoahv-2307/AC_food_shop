@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/orders}">Orders</a></li>
+            <li class="breadcrumb-item active">Order #<span th:text="${order.id}">123</span></li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-receipt"></i> Order #<span th:text="${order.id}">123</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-6">
+                            <p class="mb-1 text-muted small">Order Date</p>
+                            <p class="mb-0" th:text="${#temporals.format(order.createdAt, 'MMMM dd, yyyy HH:mm')}">Date</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-1 text-muted small">Status</p>
+                            <span class="badge" 
+                                  th:classappend="${order.status.name() == 'CONFIRMED'} ? 'bg-success' : 
+                                                 (${order.status.name() == 'PENDING'} ? 'bg-warning' : 
+                                                 (${order.status.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-info'))"
+                                  th:text="${order.status}">
+                                Status
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="mb-3">Order Items</h6>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${order.items}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img th:if="${item.foodItem.thumbnailUrl}" 
+                                                 th:src="${item.foodItem.thumbnailUrl}"
+                                                 th:alt="${item.foodItem.name}"
+                                                 class="rounded me-2"
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                            <span th:text="${item.foodItem.name}">Food Item</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center" th:text="${item.quantity}">1</td>
+                                    <td class="text-end">
+                                        $<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td class="text-end">
+                                        $<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">0.00</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Order Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>
+                            $<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span>
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total:</strong>
+                        <strong class="text-primary h5">
+                            $<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span>
+                        </strong>
+                    </div>
+
+                    <a th:href="@{/orders}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left"></i> Back to Orders
+                    </a>
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Order Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
+                            <i class="bi bi-check"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Order Placed</p>
+                            <p class="mb-0 small text-muted" 
+                               th:text="${#temporals.format(order.createdAt, 'MMM dd, HH:mm')}">Date</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center" 
+                         th:classappend="${order.status.name() == 'CONFIRMED' || order.status.name() == 'PREPARING' || order.status.name() == 'DELIVERED'} ? '' : 'opacity-50'">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                             th:classappend="${order.status.name() == 'CONFIRMED' || order.status.name() == 'PREPARING' || order.status.name() == 'DELIVERED'} ? 'bg-success text-white' : 'bg-light'"
+                             style="width: 40px; height: 40px;">
+                            <i class="bi bi-credit-card"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Payment Confirmed</p>
+                            <p class="mb-0 small text-muted" 
+                               th:if="${order.updatedAt}"
+                               th:text="${#temporals.format(order.updatedAt, 'MMM dd, HH:mm')}">Date</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

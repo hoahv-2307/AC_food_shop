@@ -31,7 +31,13 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Code Quality**: Linting/formatting tools configured for the project
+- [ ] **Testing Standards**: Test framework selected, TDD approach planned
+- [ ] **UX Consistency**: Accessibility requirements identified, design patterns specified
+- [ ] **Performance Requirements**: Performance budgets defined, monitoring strategy outlined
+- [ ] **Review Process**: Code review checklist includes constitution compliance verification
+
+*Any violations MUST be justified in Complexity Tracking section below.*
 
 ## Project Structure
 

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <h2 class="mb-4"><i class="bi bi-cart"></i> Shopping Cart</h2>
+
+    <div th:if="${cart.items.isEmpty()}" class="text-center py-5">
+        <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+        <p class="lead text-muted mt-3">Your cart is empty</p>
+        <a th:href="@{/catalog}" class="btn btn-primary">
+            <i class="bi bi-shop"></i> Start Shopping
+        </a>
+    </div>
+
+    <div th:unless="${cart.items.isEmpty()}">
+        <div class="row">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="card mb-4" th:each="item : ${cart.items}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 mb-3 mb-md-0">
+                                <img th:if="${item.foodItem.thumbnailUrl}" 
+                                     th:src="${item.foodItem.thumbnailUrl}"
+                                     th:alt="${item.foodItem.name}"
+                                     class="img-fluid rounded">
+                                <div th:unless="${item.foodItem.thumbnailUrl}"
+                                     class="bg-light rounded d-flex align-items-center justify-content-center"
+                                     style="height: 80px;">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="mb-1" th:text="${item.foodItem.name}">Food Item</h5>
+                                <p class="text-muted small mb-0">
+                                    $<span th:text="${#numbers.formatDecimal(item.foodItem.price, 1, 2)}">0.00</span> each
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group" style="max-width: 130px;">
+                                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                                            th:onclick="'updateQuantity(' + ${item.id} + ', ' + ${item.quantity - 1} + ')'">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <input type="text" class="form-control form-control-sm text-center" 
+                                           th:value="${item.quantity}" readonly>
+                                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                                            th:onclick="'updateQuantity(' + ${item.id} + ', ' + ${item.quantity + 1} + ')'">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-md-end">
+                                <p class="h5 mb-2 text-primary">
+                                    $<span th:text="${#numbers.formatDecimal(item.foodItem.price * item.quantity, 1, 2)}">0.00</span>
+                                </p>
+                            </div>
+                            <div class="col-md-1 text-end">
+                                <button class="btn btn-sm btn-outline-danger" 
+                                        th:onclick="'removeItem(' + ${item.id} + ')'">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">
+                                $<span th:text="${#numbers.formatDecimal(#aggregates.sum(cart.items.![foodItem.price * quantity]), 1, 2)}">0.00</span>
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Items:</span>
+                            <span th:text="${cart.items.size()}">0</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total:</strong>
+                            <strong class="text-primary h5" id="total">
+                                $<span th:text="${#numbers.formatDecimal(#aggregates.sum(cart.items.![foodItem.price * quantity]), 1, 2)}">0.00</span>
+                            </strong>
+                        </div>
+                        <form th:action="@{/orders/create}" method="post">
+                            <button type="submit" class="btn btn-primary w-100 mb-2">
+                                <i class="bi bi-credit-card"></i> Proceed to Checkout
+                            </button>
+                        </form>
+                        <a th:href="@{/catalog}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/cart.js}"></script>
+</th:block>
+</body>
+</html>

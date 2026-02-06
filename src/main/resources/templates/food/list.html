@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-funnel"></i> Filters</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Search -->
+                    <form th:action="@{/catalog}" method="get" class="mb-4">
+                        <label class="form-label fw-bold">Search</label>
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Search food..." th:value="${search}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Categories -->
+                    <div>
+                        <label class="form-label fw-bold">Categories</label>
+                        <div class="list-group">
+                            <a th:href="@{/catalog}" 
+                               class="list-group-item list-group-item-action"
+                               th:classappend="${categoryId == null} ? 'active' : ''">
+                                All Items
+                            </a>
+                            <a th:each="category : ${categories}"
+                               th:href="@{/catalog(categoryId=${category.id})}"
+                               class="list-group-item list-group-item-action"
+                               th:classappend="${categoryId != null && categoryId == category.id} ? 'active' : ''"
+                               th:text="${category.name}">
+                                Category Name
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Items Grid -->
+        <div class="col-md-9">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 th:if="${categoryName}" th:text="${categoryName}">Category</h2>
+                    <h2 th:unless="${categoryName}">All Items</h2>
+                    <p class="text-muted mb-0">
+                        Showing <span th:text="${foodItems.numberOfElements}">0</span> of 
+                        <span th:text="${foodItems.totalElements}">0</span> items
+                    </p>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-sm-6 col-lg-4" th:each="item : ${foodItems.content}">
+                    <div class="card h-100">
+                        <img th:if="${item.thumbnailUrl}" 
+                             th:src="${item.thumbnailUrl}" 
+                             class="card-img-top" 
+                             th:alt="${item.name}"
+                             style="height: 200px; object-fit: cover;">
+                        <div th:unless="${item.thumbnailUrl}" 
+                             class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                             style="height: 200px;">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${item.name}">Food Item</h5>
+                            <p class="card-text text-muted small" 
+                               th:text="${#strings.abbreviate(item.description, 100)}">
+                                Description
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="h5 mb-0 text-primary">
+                                    $<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">0.00</span>
+                                </span>
+                                <span class="text-warning" th:if="${item.ratingCount > 0}">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span th:text="${#numbers.formatDecimal(item.avgRating, 1, 1)}">0.0</span>
+                                    <small class="text-muted">(<span th:text="${item.ratingCount}">0</span>)</small>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a th:href="@{/catalog/{id}(id=${item.id})}" class="btn btn-primary w-100">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="text-center py-5" th:if="${foodItems.isEmpty()}">
+                <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                <p class="lead text-muted mt-3">No items found</p>
+                <a th:href="@{/catalog}" class="btn btn-primary">Clear Filters</a>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${foodItems.totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${foodItems.first} ? 'disabled' : ''">
+                        <a class="page-link" 
+                           th:href="@{/catalog(categoryId=${categoryId}, search=${search}, page=${foodItems.number - 1})}">
+                            Previous
+                        </a>
+                    </li>
+                    <li class="page-item" 
+                        th:each="i : ${#numbers.sequence(0, foodItems.totalPages - 1)}"
+                        th:classappend="${i == foodItems.number} ? 'active' : ''">
+                        <a class="page-link" 
+                           th:href="@{/catalog(categoryId=${categoryId}, search=${search}, page=${i})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${foodItems.last} ? 'disabled' : ''">
+                        <a class="page-link" 
+                           th:href="@{/catalog(categoryId=${categoryId}, search=${search}, page=${foodItems.number + 1})}">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>

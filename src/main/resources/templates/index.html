@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="bg-primary text-white py-5 mb-4">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-shop"></i> Welcome to Food Shop
+            </h1>
+            <p class="lead mb-4">Delicious food delivered to your doorstep</p>
+            <a th:href="@{/catalog}" class="btn btn-light btn-lg">
+                <i class="bi bi-grid"></i> Browse Catalog
+            </a>
+        </div>
+    </div>
+
+    <!-- Categories Quick Links -->
+    <div class="container mb-5" th:if="${!categories.isEmpty()}">
+        <h2 class="text-center mb-4">Browse by Category</h2>
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-3" th:each="category : ${categories}">
+                <a th:href="@{/catalog(categoryId=${category.id})}" 
+                   class="text-decoration-none">
+                    <div class="card h-100 text-center hover-shadow">
+                        <div class="card-body">
+                            <img th:if="${category.imageUrl}" 
+                                 th:src="${category.imageUrl}" 
+                                 th:alt="${category.name}"
+                                 class="img-fluid mb-2 rounded"
+                                 style="max-height: 80px; object-fit: cover;">
+                            <i th:unless="${category.imageUrl}" 
+                               class="bi bi-grid-3x3-gap text-primary" 
+                               style="font-size: 3rem;"></i>
+                            <h6 class="card-title mt-2 mb-0" th:text="${category.name}">Category</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Items -->
+    <div class="container">
+        <h2 class="text-center mb-4">Featured Items</h2>
+        <div class="row g-4" th:if="${!featuredItems.isEmpty()}">
+            <div class="col-sm-6 col-md-4 col-lg-3" th:each="item : ${featuredItems}">
+                <div class="card h-100 hover-shadow">
+                    <img th:if="${item.thumbnailUrl}" 
+                         th:src="${item.thumbnailUrl}" 
+                         class="card-img-top" 
+                         th:alt="${item.name}"
+                         style="height: 200px; object-fit: cover;">
+                    <div th:unless="${item.thumbnailUrl}" 
+                         class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                         style="height: 200px;">
+                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${item.name}">Food Item</h5>
+                        <p class="card-text text-muted small" th:text="${#strings.abbreviate(item.description, 80)}">
+                            Description
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="h5 mb-0 text-primary">
+                                $<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">0.00</span>
+                            </span>
+                            <span class="text-warning" th:if="${item.ratingCount > 0}">
+                                <i class="bi bi-star-fill"></i>
+                                <span th:text="${#numbers.formatDecimal(item.avgRating, 1, 1)}">0.0</span>
+                                <small class="text-muted">(<span th:text="${item.ratingCount}">0</span>)</small>
+                            </span>
+                        </div>
+                        <a th:href="@{/catalog/{id}(id=${item.id})}" class="btn btn-primary w-100">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-5" th:if="${featuredItems.isEmpty()}">
+            <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+            <p class="lead text-muted mt-3">No featured items available yet</p>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="styles">
+    <style>
+        .hover-shadow {
+            transition: box-shadow 0.3s ease;
+        }
+        .hover-shadow:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</th:block>
+</body>
+</html>

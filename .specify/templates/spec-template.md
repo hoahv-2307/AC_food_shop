@@ -95,6 +95,22 @@
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
+### User Experience Requirements
+
+- **UX-001**: All UI components MUST be WCAG 2.1 Level AA compliant
+- **UX-002**: Interface MUST be responsive (mobile 320px, tablet 768px, desktop 1920px+)
+- **UX-003**: Error messages MUST be actionable and user-friendly (no technical jargon)
+- **UX-004**: Loading indicators MUST appear for operations >200ms
+- **UX-005**: UI patterns MUST follow established design system
+
+### Performance Requirements
+
+- **PERF-001**: API responses MUST meet p95 < 500ms for read operations
+- **PERF-002**: Page load times MUST meet FCP < 1.5s, TTI < 3.5s, LCP < 2.5s
+- **PERF-003**: JavaScript bundle MUST be < 200KB (gzipped)
+- **PERF-004**: Database queries MUST avoid N+1 patterns, use pagination for >1000 rows
+- **PERF-005**: All performance metrics MUST be monitored in production
+
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]

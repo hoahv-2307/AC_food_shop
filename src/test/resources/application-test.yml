@@ -1,0 +1,58 @@
+# Test profile configuration
+spring:
+  datasource:
+    # Testcontainers will override these
+    url: jdbc:tc:postgresql:16:///testdb
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+  
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  
+  data:
+    redis:
+      # Testcontainers will override these
+      host: localhost
+      port: 6379
+  
+  session:
+    store-type: redis
+    redis:
+      flush-mode: immediate
+  
+  mail:
+    # Mock mail for tests
+    host: localhost
+    port: 1025
+
+# Test-specific application properties
+app:
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket-name: test-bucket
+  
+  stripe:
+    publishable-key: pk_test_fake
+    secret-key: sk_test_fake
+    webhook-secret: whsec_test_fake
+  
+  base-url: http://localhost:8080
+  name: Food Shop Test
+  admin-email: admin@test.com
+
+# Logging for tests
+logging:
+  level:
+    com.foodshop: DEBUG
+    org.springframework.security: DEBUG
+    org.testcontainers: INFO
