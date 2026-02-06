@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .order-info {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .items-table th, .items-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .items-table th {
+            background: #f8f9fa;
+        }
+        .total {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0d6efd;
+            margin-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #0d6efd;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛒 Food Shop</h1>
+        <p>Order Confirmation</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear <span th:text="${userName}">Customer</span>,</p>
+        
+        <p>Thank you for your order! Your payment has been confirmed and we're preparing your food.</p>
+        
+        <div class="order-info">
+            <h3>Order Details</h3>
+            <p><strong>Order Number:</strong> ORD-<span th:text="${orderId}">123</span></p>
+            <p><strong>Order Date:</strong> <span th:text="${#temporals.format(orderDate, 'MMMM dd, yyyy HH:mm')}">Date</span></p>
+            <p><strong>Status:</strong> <span style="color: #198754;">Confirmed</span></p>
+        </div>
+        
+        <h3>Order Items</h3>
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th style="text-align: center;">Quantity</th>
+                    <th style="text-align: right;">Price</th>
+                    <th style="text-align: right;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.name}">Food Item</td>
+                    <td style="text-align: center;" th:text="${item.quantity}">1</td>
+                    <td style="text-align: right;">$<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">0.00</span></td>
+                    <td style="text-align: right;">$<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">0.00</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="total">
+            Total: $<span th:text="${#numbers.formatDecimal(totalAmount, 1, 2)}">0.00</span>
+        </div>
+        
+        <p style="text-align: center;">
+            <a th:href="${orderUrl}" class="button">View Order Details</a>
+        </p>
+        
+        <p>We'll notify you when your order status changes. Estimated delivery time is 30-45 minutes.</p>
+    </div>
+    
+    <div class="footer">
+        <p>Thank you for choosing Food Shop!</p>
+        <p>Questions? Contact us at support@foodshop.com</p>
+        <p>&copy; 2026 Food Shop. All rights reserved.</p>
+    </div>
+</body>
+</html>

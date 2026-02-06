@@ -1,0 +1,37 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        
+  thymeleaf:
+    cache: false
+    
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+      
+logging:
+  level:
+    root: INFO
+    com.foodshop: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    
+# Development-specific settings
+server:
+  error:
+    include-stacktrace: always
+
+app:
+  stripe:
+    secret-key: test
+    cancel-url: ${STRIPE_CANCEL_URL:http://localhost:8080/checkout?cancelled=true}
+    
+# Disable CSRF for development (re-enable in production)
+# spring.security.enabled: false

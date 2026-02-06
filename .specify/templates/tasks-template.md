@@ -68,6 +68,10 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T007 Create base models/entities that all stories depend on
 - [ ] T008 Configure error handling and logging infrastructure
 - [ ] T009 Setup environment configuration management
+- [ ] T010 [P] Configure linting/formatting tools per Constitution Principle I (Code Quality)
+- [ ] T011 [P] Setup test framework and TDD workflow per Constitution Principle II (Testing Standards)
+- [ ] T012 [P] Configure performance monitoring and alerting per Constitution Principle IV (Performance)
+- [ ] T013 [P] Setup accessibility testing tools per Constitution Principle III (UX Consistency)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -79,20 +83,23 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1 (REQUIRED per Constitution Principle II) ✅
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **CRITICAL: TDD MANDATORY - Write these tests FIRST, ensure they FAIL before implementation**
+> **Coverage requirement: Minimum 80% line coverage for new code**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T010 [P] [US1] Unit tests for [business logic] in tests/unit/test_[name].py (write FIRST)
+- [ ] T011 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py (write FIRST)
+- [ ] T012 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py (write FIRST)
+- [ ] T013 [US1] End-to-end test for critical user path in tests/e2e/test_[name].py (write FIRST)
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
+- [ ] T014 [P] [US1] Create [Entity1] model in src/models/[entity1].py (with unit tests passing)
+- [ ] T015 [P] [US1] Create [Entity2] model in src/models/[entity2].py (with unit tests passing)
+- [ ] T016 [US1] Implement [Service] in src/services/[service].py (depends on T014, T015, tests green)
+- [ ] T017 [US1] Implement [endpoint/feature] in src/[location]/[file].py (contract tests green)
+- [ ] T018 [US1] Add validation and error handling (all error scenarios tested)
 - [ ] T017 [US1] Add logging for user story 1 operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
@@ -105,17 +112,21 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2 (REQUIRED per Constitution Principle II) ✅
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+> **CRITICAL: TDD MANDATORY - Write these tests FIRST, ensure they FAIL before implementation**
+> **Coverage requirement: Minimum 80% line coverage for new code**
+
+- [ ] T018 [P] [US2] Unit tests for [business logic] in tests/unit/test_[name].py (write FIRST)
+- [ ] T019 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py (write FIRST)
+- [ ] T020 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py (write FIRST)
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T021 [P] [US2] Create [Entity] model in src/models/[entity].py (with unit tests passing)
+- [ ] T022 [US2] Implement [Service] in src/services/[service].py (with unit tests passing)
+- [ ] T023 [US2] Implement [endpoint/feature] in src/[location]/[file].py (contract tests green)
+- [ ] T024 [US2] Integrate with User Story 1 components (if needed, integration tests green)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -127,16 +138,20 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3 (REQUIRED per Constitution Principle II) ✅
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+> **CRITICAL: TDD MANDATORY - Write these tests FIRST, ensure they FAIL before implementation**
+> **Coverage requirement: Minimum 80% line coverage for new code**
+
+- [ ] T025 [P] [US3] Unit tests for [business logic] in tests/unit/test_[name].py (write FIRST)
+- [ ] T026 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py (write FIRST)
+- [ ] T027 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py (write FIRST)
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T028 [P] [US3] Create [Entity] model in src/models/[entity].py (with unit tests passing)
+- [ ] T029 [US3] Implement [Service] in src/services/[service].py (with unit tests passing)
+- [ ] T030 [US3] Implement [endpoint/feature] in src/[location]/[file].py (contract tests green)
 
 **Checkpoint**: All user stories should now be independently functional
 

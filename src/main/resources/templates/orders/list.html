@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <h2 class="mb-4"><i class="bi bi-box"></i> Order History</h2>
+
+    <div th:if="${orders.isEmpty()}" class="text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
+        <p class="lead text-muted mt-3">No orders yet</p>
+        <a th:href="@{/catalog}" class="btn btn-primary">
+            <i class="bi bi-shop"></i> Start Shopping
+        </a>
+    </div>
+
+    <div th:unless="${orders.isEmpty()}">
+        <div class="card mb-3" th:each="order : ${orders.content}">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h5 class="mb-1">
+                            Order #<span th:text="${order.id}">123</span>
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-calendar"></i>
+                            <span th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</span>
+                        </p>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <span class="badge" 
+                              th:classappend="${order.status.name() == 'CONFIRMED'} ? 'bg-success' : 
+                                             (${order.status.name() == 'PENDING'} ? 'bg-warning' : 
+                                             (${order.status.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-info'))"
+                              th:text="${order.status}">
+                            Status
+                        </span>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <p class="mb-0 text-muted small">Items</p>
+                        <p class="mb-0 fw-bold" th:text="${order.items.size()}">0</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <p class="mb-0 text-muted small">Total</p>
+                        <p class="mb-0 h5 text-primary">
+                            $<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span>
+                        </p>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${orders.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${orders.first} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/orders(page=${orders.number - 1})}">Previous</a>
+                </li>
+                <li class="page-item" 
+                    th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}"
+                    th:classappend="${i == orders.number} ? 'active' : ''">
+                    <a class="page-link" th:href="@{/orders(page=${i})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${orders.last} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/orders(page=${orders.number + 1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>
