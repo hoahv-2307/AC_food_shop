@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
@@ -75,6 +76,9 @@ public class FoodItem implements Serializable {
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
+
+  @OneToOne(mappedBy = "foodItem", fetch = FetchType.LAZY)
+  private FoodAnalytics analytics;
 
   @PrePersist
   protected void onCreate() {
@@ -169,6 +173,14 @@ public class FoodItem implements Serializable {
 
   public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
+  }
+
+  public FoodAnalytics getAnalytics() {
+    return analytics;
+  }
+
+  public void setAnalytics(FoodAnalytics analytics) {
+    this.analytics = analytics;
   }
 
   @Override

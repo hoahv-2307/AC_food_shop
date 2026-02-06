@@ -1,7 +1,10 @@
 package com.foodshop.service;
 
+import com.foodshop.domain.User;
+import com.foodshop.dto.MonthlyReportSummaryDTO;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -123,6 +126,51 @@ public class EmailService {
       LOGGER.info("Welcome email sent to: {}", toEmail);
     } catch (Exception e) {
       LOGGER.error("Failed to send welcome email to: {}", toEmail, e);
+    }
+  }
+
+  /**
+   * Sends monthly analytics report to all admin users.
+   *
+   * <p>Creates HTML email with analytics summary table showing view and order counts for all food
+   * items.
+   *
+   * @param admins list of admin users to send report to
+   * @param summary the monthly report summary data
+   */
+  @Async("emailExecutor")
+  public void sendMonthlyAnalyticsReport(List<User> admins, MonthlyReportSummaryDTO summary) {
+    try {
+      Context context = new Context();
+      context.setVariable("reportMonth", summary.reportMonth());
+      context.setVariable("totalItems", summary.totalItems());
+      context.setVariable("totalViews", summary.totalViews());
+      context.setVariable("totalOrders", summary.totalOrders());
+      context.setVariable("items", summary.items());
+      context.setVariable("appName", appName);
+
+      String htmlContent = templateEngine.process("email/monthly-analytics-report", context);
+
+      // Send to all admins
+      for (User admin : admins) {
+        try {
+          sendHtmlEmail(
+              admin.getEmail(),
+              "Monthly Analytics Report - " + summary.reportMonth(),
+              htmlContent);
+          LOGGER.info("Monthly report sent to admin: {}", admin.getEmail());
+        } catch (Exception e) {
+          LOGGER.error("Failed to send monthly report to admin: {}", admin.getEmail(), e);
+        }
+      }
+
+      LOGGER.info(
+          "Monthly analytics report for {} sent to {} admins",
+          summary.reportMonth(),
+          admins.size());
+    } catch (Exception e) {
+      LOGGER.error("Failed to send monthly analytics report", e);
+      throw new RuntimeException("Failed to send monthly analytics report", e);
     }
   }
 

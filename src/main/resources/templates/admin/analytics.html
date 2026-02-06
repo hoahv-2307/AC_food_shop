@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/base}">
+  <head>
+    <title>Analytics Dashboard - Food Shop Admin</title>
+    <link rel="stylesheet" th:href="@{/css/analytics.css}" />
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div class="container mt-5">
+        <div class="row mb-4">
+          <div class="col-12">
+            <h1 class="display-4">Analytics Dashboard</h1>
+            <p class="lead text-muted">
+              View and order metrics for all food items
+            </p>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title text-muted mb-1">Total Items</h5>
+                <p class="card-text display-6" th:text="${analyticsList.size()}">0</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title text-muted mb-1">Total Views</h5>
+                <p class="card-text display-6" th:text="${totalViews}">0</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title text-muted mb-1">Total Orders</h5>
+                <p class="card-text display-6" th:text="${totalOrders}">0</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title text-muted mb-1">Avg Views/Item</h5>
+                <p
+                    class="card-text display-6"
+                    th:text="${analyticsList.size() > 0 ? #numbers.formatDecimal(totalViews / analyticsList.size(), 1, 1) : 0}">
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sort Controls -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="btn-toolbar" role="toolbar">
+              <div class="btn-group me-2" role="group">
+                <a
+                    th:href="@{/admin/analytics(sort='views_desc')}"
+                    class="btn"
+                    th:classappend="${currentSort == 'views_desc'} ? 'btn-primary' : 'btn-outline-primary'"
+                    id="sort-views-desc">
+                  <i class="bi bi-eye-fill"></i> Most Viewed
+                </a>
+                <a
+                    th:href="@{/admin/analytics(sort='views_asc')}"
+                    class="btn"
+                    th:classappend="${currentSort == 'views_asc'} ? 'btn-primary' : 'btn-outline-primary'">
+                  <i class="bi bi-eye"></i> Least Viewed
+                </a>
+              </div>
+              <div class="btn-group" role="group">
+                <a
+                    th:href="@{/admin/analytics(sort='orders_desc')}"
+                    class="btn"
+                    th:classappend="${currentSort == 'orders_desc'} ? 'btn-primary' : 'btn-outline-primary'"
+                    id="sort-orders-desc">
+                  <i class="bi bi-cart-fill"></i> Most Ordered
+                </a>
+                <a
+                    th:href="@{/admin/analytics(sort='orders_asc')}"
+                    class="btn"
+                    th:classappend="${currentSort == 'orders_asc'} ? 'btn-primary' : 'btn-outline-primary'">
+                  <i class="bi bi-cart"></i> Least Ordered
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Table -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card shadow">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                      class="table table-hover analytics-table"
+                      th:if="${not #lists.isEmpty(analyticsList)}">
+                    <thead class="table-light">
+                      <tr>
+                        <th scope="col" style="width: 80px">Image</th>
+                        <th scope="col">Food Item</th>
+                        <th scope="col" class="text-end" style="width: 150px">
+                          <i class="bi bi-eye"></i> Views
+                        </th>
+                        <th scope="col" class="text-end" style="width: 150px">
+                          <i class="bi bi-cart"></i> Orders
+                        </th>
+                        <th scope="col" class="text-end" style="width: 150px">
+                          Conversion Rate
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="item : ${analyticsList}">
+                        <td>
+                          <img
+                              th:src="${item.imageUrl() != null ? item.imageUrl() : '/images/placeholder.jpg'}"
+                              th:alt="${item.foodItemName()}"
+                              class="img-thumbnail analytics-thumbnail"
+                              style="width: 60px; height: 60px; object-fit: cover" />
+                        </td>
+                        <td class="align-middle">
+                          <strong th:text="${item.foodItemName()}">Food Name</strong>
+                        </td>
+                        <td class="align-middle text-end">
+                          <span class="badge bg-info fs-6" th:text="${item.viewCount()}">
+                            0
+                          </span>
+                        </td>
+                        <td class="align-middle text-end">
+                          <span
+                              class="badge bg-success fs-6"
+                              th:text="${item.orderCount()}">
+                            0
+                          </span>
+                        </td>
+                        <td class="align-middle text-end">
+                          <span
+                              class="text-muted"
+                              th:text="${item.viewCount() > 0 ? #numbers.formatDecimal((item.orderCount() * 100.0) / item.viewCount(), 1, 1) + '%' : '0%'}">
+                            0%
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Empty State -->
+                  <div
+                      th:if="${#lists.isEmpty(analyticsList)}"
+                      class="text-center py-5">
+                    <i class="bi bi-graph-up" style="font-size: 4rem; color: #ccc"></i>
+                    <p class="text-muted mt-3">
+                      No analytics data available yet. Analytics will appear once customers
+                      start viewing and ordering food items.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <a th:href="@{/}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left"></i> Back to Home
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
