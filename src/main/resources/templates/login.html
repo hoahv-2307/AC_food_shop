@@ -21,7 +21,8 @@
 
                         <div th:if="${param.error}" class="alert alert-danger">
                             <i class="bi bi-exclamation-triangle"></i>
-                            Login failed. Please try again.
+                            <span th:if="${param.error == 'true'}">Invalid email or password. Please try again.</span>
+                            <span th:unless="${param.error == 'true'}">Login failed. Please try again.</span>
                         </div>
 
                         <div th:if="${param.logout}" class="alert alert-success">
@@ -29,15 +30,41 @@
                             You have been logged out successfully.
                         </div>
 
+                        <!-- Admin Login Form -->
+                        <div class="mb-4">
+                            <h5 class="text-center mb-3">Admin Login</h5>
+                            <form th:action="@{/login}" method="post">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           placeholder="admin@foodshop.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Enter your password" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="text-center my-3">
+                            <span class="text-muted">or continue with</span>
+                        </div>
+
                         <!-- OAuth2 Login Buttons -->
                         <div class="d-grid gap-2">
                             <a th:href="@{/oauth2/authorization/google}" 
-                               class="btn btn-outline-danger btn-lg">
+                               class="btn btn-outline-danger">
                                 <i class="bi bi-google"></i> Sign in with Google
                             </a>
                             
                             <a th:href="@{/oauth2/authorization/facebook}" 
-                               class="btn btn-outline-primary btn-lg">
+                               class="btn btn-outline-primary">
                                 <i class="bi bi-facebook"></i> Sign in with Facebook
                             </a>
                         </div>

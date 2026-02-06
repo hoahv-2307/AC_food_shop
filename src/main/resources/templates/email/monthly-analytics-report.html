@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monthly Analytics Report</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+          Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 3px solid #0d6efd;
+        padding-bottom: 20px;
+      }
+      .header h1 {
+        color: #0d6efd;
+        margin: 0 0 10px 0;
+        font-size: 28px;
+      }
+      .header p {
+        color: #6c757d;
+        margin: 5px 0;
+        font-size: 16px;
+      }
+      .summary-cards {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+      .summary-card {
+        flex: 1;
+        min-width: 150px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .summary-card.views {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      }
+      .summary-card.orders {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+      }
+      .summary-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .summary-card .value {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 0;
+      }
+      .table-container {
+        overflow-x: auto;
+        margin-bottom: 30px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      thead {
+        background-color: #f8f9fa;
+      }
+      th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+      }
+      th.text-right {
+        text-align: right;
+      }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+      }
+      td.text-right {
+        text-align: right;
+      }
+      tbody tr:hover {
+        background-color: #f8f9fa;
+      }
+      .food-name {
+        font-weight: 500;
+        color: #212529;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .badge-info {
+        background-color: #17a2b8;
+        color: white;
+      }
+      .badge-success {
+        background-color: #28a745;
+        color: white;
+      }
+      .conversion-rate {
+        color: #6c757d;
+        font-size: 14px;
+      }
+      .footer {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #dee2e6;
+        color: #6c757d;
+        font-size: 14px;
+      }
+      .footer a {
+        color: #0d6efd;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+      .top-performer {
+        background-color: #fff3cd;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        .container {
+          padding: 15px;
+        }
+        .summary-cards {
+          flex-direction: column;
+        }
+        .summary-card {
+          min-width: 100%;
+        }
+        table {
+          font-size: 14px;
+        }
+        th,
+        td {
+          padding: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>📊 Monthly Analytics Report</h1>
+        <p th:text="${'Report Period: ' + reportMonth}">Report Period: January 2026</p>
+        <p th:text="${appName}">Food Shop</p>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h3>Total Items</h3>
+          <p class="value" th:text="${totalItems}">0</p>
+        </div>
+        <div class="summary-card views">
+          <h3>Total Views</h3>
+          <p class="value" th:text="${totalViews}">0</p>
+        </div>
+        <div class="summary-card orders">
+          <h3>Total Orders</h3>
+          <p class="value" th:text="${totalOrders}">0</p>
+        </div>
+      </div>
+
+      <!-- Analytics Table -->
+      <div class="table-container">
+        <h2>Food Item Performance</h2>
+
+        <div th:if="${items != null and !items.isEmpty()}">
+          <table>
+            <thead>
+              <tr>
+                <th>Food Item</th>
+                <th class="text-right">👁️ Views</th>
+                <th class="text-right">🛒 Orders</th>
+                <th class="text-right">Conversion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                  th:each="item, iterStat : ${items}"
+                  th:classappend="${iterStat.index == 0} ? 'top-performer'">
+                <td>
+                  <span class="food-name" th:text="${item.foodItemName()}">Food Name</span>
+                  <span
+                      th:if="${iterStat.index == 0}"
+                      style="margin-left: 8px; font-size: 16px"
+                      title="Top Performer">
+                    🏆
+                  </span>
+                </td>
+                <td class="text-right">
+                  <span class="badge badge-info" th:text="${item.viewCount()}">0</span>
+                </td>
+                <td class="text-right">
+                  <span class="badge badge-success" th:text="${item.orderCount()}">0</span>
+                </td>
+                <td class="text-right">
+                  <span
+                      class="conversion-rate"
+                      th:text="${item.viewCount() > 0 ? #numbers.formatDecimal((item.orderCount() * 100.0) / item.viewCount(), 1, 1) + '%' : '0%'}">
+                    0%
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${items == null or items.isEmpty()}" class="empty-state">
+          <p>No analytics data available for this period.</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          This is an automated report generated by
+          <strong th:text="${appName}">Food Shop</strong>.
+        </p>
+        <p>
+          View detailed analytics in the
+          <a href="#" th:href="@{|${#httpServletRequest.scheme}://${#httpServletRequest.serverName}:${#httpServletRequest.serverPort}/admin/analytics|}">
+            Admin Dashboard
+          </a>
+        </p>
+        <p style="margin-top: 20px; font-size: 12px">
+          © <span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
+          <span th:text="${appName}">Food Shop</span>. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

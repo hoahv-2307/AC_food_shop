@@ -1,0 +1,119 @@
+/* Analytics Dashboard Styles */
+
+.analytics-table {
+  font-size: 1rem;
+}
+
+.analytics-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+}
+
+.analytics-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.analytics-table tbody tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.analytics-thumbnail {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card.shadow {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  transition: box-shadow 0.3s ease;
+}
+
+.card.shadow:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card.shadow-sm {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.display-6 {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.btn-toolbar {
+  gap: 0.5rem;
+}
+
+.badge.fs-6 {
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .btn-toolbar {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group {
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    flex: 1;
+  }
+
+  .analytics-table {
+    font-size: 0.875rem;
+  }
+
+  .badge.fs-6 {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.5rem;
+  }
+}
+
+/* Empty state */
+.bi-graph-up {
+  opacity: 0.3;
+}
+
+/* Sort button active state */
+.btn-primary {
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+/* Summary card animations */
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Table header icons */
+thead th i {
+  margin-right: 0.25rem;
+}
+
+/* Conversion rate styling */
+.text-muted {
+  font-size: 0.9rem;
+}

@@ -47,6 +47,10 @@ public class User implements Serializable {
   @Column(name = "avatar_url")
   private String avatarUrl;
 
+  @Size(max = 255)
+  @Column(name = "password")
+  private String password;
+
   @NotNull
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
@@ -115,6 +119,14 @@ public class User implements Serializable {
 
   public void setAvatarUrl(String avatarUrl) {
     this.avatarUrl = avatarUrl;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public OAuthProvider getProvider() {
@@ -197,7 +209,8 @@ public class User implements Serializable {
   /** OAuth2 authentication provider. */
   public enum OAuthProvider {
     GOOGLE,
-    FACEBOOK
+    FACEBOOK,
+    LOCAL
   }
 
   /** User role for authorization. */

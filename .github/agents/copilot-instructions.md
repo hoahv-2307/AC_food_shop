@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-02-06
 
 ## Active Technologies
+- Java 21 + Spring Boot 3.2.2, Spring Data JPA, Hibernate, Thymeleaf, Spring Security, Spring Mail (003-food-analytics)
+- PostgreSQL (via Flyway migrations), Redis (for session-based view tracking) (003-food-analytics)
 
 - Java 21 LTS (Spring Boot 3.2.x) + Spring Boot (Web, Security, Data JPA, OAuth2 Client, Mail, Validation), Thymeleaf, Bootstrap 5, Stripe Java SDK (001-food-shop-app)
 
@@ -23,6 +25,7 @@ tests/
 Java 21 LTS (Spring Boot 3.2.x): Follow standard conventions
 
 ## Recent Changes
+- 003-food-analytics: Added Java 21 + Spring Boot 3.2.2, Spring Data JPA, Hibernate, Thymeleaf, Spring Security, Spring Mail
 
 - 001-food-shop-app: Added Java 21 LTS (Spring Boot 3.2.x) + Spring Boot (Web, Security, Data JPA, OAuth2 Client, Mail, Validation), Thymeleaf, Bootstrap 5, Stripe Java SDK
 

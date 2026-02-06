@@ -1,8 +1,10 @@
 package com.foodshop.controller;
 
 import com.foodshop.domain.FoodItem;
+import com.foodshop.service.AnalyticsTrackingService;
 import com.foodshop.service.CategoryService;
 import com.foodshop.service.FoodItemService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +23,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/catalog")
 public class FoodItemController {
 
+  private static final String VIEWED_ITEMS_SESSION_KEY = "viewedFoodItems";
+
   private final FoodItemService foodItemService;
   private final CategoryService categoryService;
+  private final AnalyticsTrackingService analyticsTrackingService;
 
-  public FoodItemController(FoodItemService foodItemService, CategoryService categoryService) {
+  public FoodItemController(
+      FoodItemService foodItemService,
+      CategoryService categoryService,
+      AnalyticsTrackingService analyticsTrackingService) {
     this.foodItemService = foodItemService;
     this.categoryService = categoryService;
+    this.analyticsTrackingService = analyticsTrackingService;
   }
 
   /**
@@ -71,17 +80,54 @@ public class FoodItemController {
   /**
    * Displays food item details.
    *
+   * <p>Tracks view count using session-based deduplication to prevent counting multiple views from
+   * the same session.
+   *
    * @param id the food item ID
    * @param model the model
+   * @param session the HTTP session
    * @return the detail view
    */
   @GetMapping("/{id}")
-  public String detail(@PathVariable Long id, Model model) {
+  public String detail(@PathVariable Long id, Model model, HttpSession session) {
     FoodItem foodItem = foodItemService.findById(id);
+
+    // Track view with session-based deduplication
+    trackViewIfNotAlreadyViewed(id, session);
 
     model.addAttribute("foodItem", foodItem);
     model.addAttribute("title", foodItem.getName());
 
     return "food/detail";
+  }
+
+  /**
+   * Tracks a view for a food item if it hasn't been viewed in this session.
+   *
+   * <p>Uses a Set stored in the session to prevent duplicate view counts within the same session.
+   *
+   * @param foodItemId the food item ID
+   * @param session the HTTP session
+   */
+  @SuppressWarnings("unchecked")
+  private void trackViewIfNotAlreadyViewed(Long foodItemId, HttpSession session) {
+    java.util.Set<Long> viewedItems =
+        (java.util.Set<Long>) session.getAttribute(VIEWED_ITEMS_SESSION_KEY);
+
+    if (viewedItems == null) {
+      viewedItems = new java.util.HashSet<>();
+      session.setAttribute(VIEWED_ITEMS_SESSION_KEY, viewedItems);
+    }
+
+    // Only track if not already viewed in this session
+    if (!viewedItems.contains(foodItemId)) {
+      try {
+        analyticsTrackingService.incrementViewCount(foodItemId);
+        viewedItems.add(foodItemId);
+      } catch (Exception e) {
+        // Log but don't fail the request if analytics tracking fails
+        // (logger would be injected in production)
+      }
+    }
   }
 }

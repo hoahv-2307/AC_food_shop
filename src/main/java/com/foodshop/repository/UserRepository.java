@@ -1,6 +1,7 @@
 package com.foodshop.repository;
 
 import com.foodshop.domain.User;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,4 +41,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @return true if user exists, false otherwise
    */
   boolean existsByEmail(String email);
+
+  /**
+   * Finds all users with a specific role.
+   *
+   * @param role the user role
+   * @return list of users with the specified role
+   */
+  @Query("SELECT u FROM User u WHERE u.role = :role")
+  List<User> findByRole(@Param("role") User.UserRole role);
 }

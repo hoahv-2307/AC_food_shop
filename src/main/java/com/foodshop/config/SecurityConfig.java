@@ -1,18 +1,21 @@
 package com.foodshop.config;
 
 import com.foodshop.security.CustomOAuth2UserService;
+import com.foodshop.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Security configuration for the application.
  *
- * <p>Configures OAuth2 login with Google and Facebook, session management, and authorization
- * rules.
+ * <p>Configures OAuth2 login with Google and Facebook, form-based login for admin,
+ * session management, and authorization rules.
  */
 @Configuration
 @EnableWebSecurity
@@ -20,9 +23,23 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   private final CustomOAuth2UserService customOAuth2UserService;
+  private final CustomUserDetailsService customUserDetailsService;
 
-  public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+  public SecurityConfig(
+      CustomOAuth2UserService customOAuth2UserService,
+      CustomUserDetailsService customUserDetailsService) {
     this.customOAuth2UserService = customOAuth2UserService;
+    this.customUserDetailsService = customUserDetailsService;
+  }
+
+  /**
+   * Password encoder bean for form-based authentication.
+   *
+   * @return BCrypt password encoder
+   */
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 
   /**
@@ -44,6 +61,15 @@ public class SecurityConfig {
             .anyRequest()
             .authenticated()
         )
+        .formLogin(form -> form
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .defaultSuccessUrl("/admin/analytics", true)
+            .failureUrl("/login?error=true")
+            .usernameParameter("email")
+            .passwordParameter("password")
+            .permitAll()
+        )
         .oauth2Login(oauth2 -> oauth2
             .loginPage("/login")
             .defaultSuccessUrl("/catalog", true)
@@ -59,7 +85,8 @@ public class SecurityConfig {
         .sessionManagement(session -> session
             .maximumSessions(1)
             .maxSessionsPreventsLogin(false)
-        );
+        )
+        .userDetailsService(customUserDetailsService);
 
     return http.build();
   }
